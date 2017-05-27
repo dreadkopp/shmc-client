@@ -1,0 +1,44 @@
+{
+    "manifest_version": 2,
+    "name": "Smart Home Media Center",
+    "short_name": "SHMC",
+    "version": "0.7.1",
+    "description": "The last OS you ever need",
+    "icons": {
+        "128": "icons/icon128.png",
+        "48": "icons/icon48.png",
+        "32": "icons/icon32.png",
+        "16": "icons/icon16.png"
+    },
+    "app": {
+        "background": {
+            "persistent": false,
+            "css": ["static/css/material.min.css", "static/css/material-icons.css", "static/css/style.css", "static/css/roboto.css"],
+            "scripts": ["static/js/jquery-2.2.0.min.js", "static/js/material.min.js", "static/js/common.js", "static/js/background.js"]
+        }
+    },
+    "sockets": {
+        "udp": { "bind": "*", "send": "*" }
+    },
+    "permissions": [
+        "webview",
+        "http://shmc-server/*",
+        "storage",
+        "unlimitedStorage",
+        "pointerLock",
+        "system.network",
+        "fullscreen",
+        "overrideEscFullscreen", {
+        "socket": [
+            "tcp-connect",
+            "resolve-host",
+            "udp-bind:*:*",
+            "udp-send-to:*:*"
+        ] }
+    ],
+    "requirements": {
+        "3D": {
+            "features": ["webgl"]
+        }
+    }
+}
