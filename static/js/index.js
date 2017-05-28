@@ -5,12 +5,14 @@ var myUniqueid;
 var api;  // `api` should only be set if we're in a host-specific screen. on the initial screen it should always be null.
 var isInGame = false; // flag indicating whether the game stream started
 var windowState = 'normal'; // chrome's windowState, possible values: 'normal' or 'fullscreen'
+var initialLoadDone = false
 
 
 // Called by the common.js module.
 function attachListeners() {
     changeUiModeForNaClLoad();
-
+    $('#toStreams').on('click', showMoonlight);
+    $('#toDesktop').on('click', showDesktop);
     $('.resolutionMenu li').on('click', saveResolution);
     $('.framerateMenu li').on('click', saveFramerate);
     $('#bitrateSlider').on('input', updateBitrateField); // input occurs every notch you slide
@@ -23,12 +25,25 @@ function attachListeners() {
     chrome.app.window.current().onMaximized.addListener(fullscreenChromeWindow);
 }
 
+function showMoonlight() {
+  $("#main-content").show();
+  $("#main-content-desktop").hide();
+}
+
+
+function showDesktop() {
+  $("#main-content").hide();
+  $("#main-content-desktop").show();
+
+}
+
+
 function fullscreenChromeWindow() {
     // when the user clicks the maximize button on the window,
     // FIRST restore it to the previous size, then fullscreen it to the whole screen
     // this prevents the previous window size from being 'maximized',
     // and allows us to functionally retain two window sizes
-    // so that when the user hits `esc`, they go back to the "restored" size, 
+    // so that when the user hits `esc`, they go back to the "restored" size,
     // instead of "maximized", which would immediately go to fullscreen
     chrome.app.window.current().restore();
     chrome.app.window.current().fullscreen();
@@ -65,8 +80,9 @@ function onBoundsChanged() {
 
 function changeUiModeForNaClLoad() {
     $('#main-navigation').children().hide();
+    $("#main-content-stream").hide();
     $("#main-content").children().not("#listener, #naclSpinner").hide();
-    $('#naclSpinnerMessage').text('Loading Moonlight plugin...');
+    $('#naclSpinnerMessage').text('Loading SHMC Client plugin...');
     $('#naclSpinner').css('display', 'inline-block');
 }
 
@@ -105,6 +121,11 @@ function restoreUiAfterNaClLoad() {
             }
         }
     });
+    if (!initialLoadDone){
+      $("#main-content").hide();
+      $("#main-content-desktop").show();
+      initialLoadDone = true;
+    }
 }
 
 function beginBackgroundPollingOfHost(host) {
@@ -183,14 +204,14 @@ function moduleDidLoad() {
     }
 
     if(!pairingCert) { // we couldn't load a cert. Make one.
-        console.log("Failed to load local cert. Generating new one");   
+        console.log("Failed to load local cert. Generating new one");
         sendMessage('makeCert', []).then(function (cert) {
             storeData('cert', cert, null);
             pairingCert = cert;
             console.log("Generated new cert.");
         }, function (failedCert) {
             console.log('ERROR: failed to generate new cert!');
-            console.log('Returned error was: ' + failedCert);            
+            console.log('Returned error was: ' + failedCert);
         }).then(function (ret) {
             sendMessage('httpInit', [pairingCert.cert, pairingCert.privateKey, myUniqueid]).then(function (ret) {
                 restoreUiAfterNaClLoad();
@@ -279,11 +300,11 @@ function hostChosen(host) {
     api = host;
     if (!host.paired) {
         // Still not paired; go to the pairing flow
-        pairTo(host, function() { 
-            showApps(host); 
+        pairTo(host, function() {
+            showApps(host);
             saveHosts();
-        }, 
-            function(){ 
+        },
+            function(){
         });
     } else {
         // When we queried again, it was paired, so show apps.
@@ -339,7 +360,7 @@ function addHostToGrid(host, ismDNSDiscovered) {
     $(outerDiv).append(cell);
     if (!ismDNSDiscovered) {
         // we don't have the option to delete mDNS hosts.  So don't show it to the user.
-        $(outerDiv).append(removalButton);        
+        $(outerDiv).append(removalButton);
     }
     $('#host-grid').append(outerDiv);
     hosts[host.serverUid] = host;
@@ -373,7 +394,7 @@ function removeClicked(host) {
 // and puts the CSS style for non-current app apps that aren't running
 // this requires a hot-off-the-host `api`, and the appId we're going to stylize
 // the function was made like this so that we can remove duplicated code, but
-// not do N*N stylizations of the box art, or make the code not flow very well 
+// not do N*N stylizations of the box art, or make the code not flow very well
 function stylizeBoxArt(freshApi, appIdToStylize) {
     if (freshApi.currentGame === appIdToStylize){ // stylize the currently running game
         // destylize it, if it has the not-current-game style
@@ -515,7 +536,7 @@ function startGame(host, appID) {
             if(host.currentGame != 0 && host.currentGame != appID) {
                 host.getAppById(host.currentGame).then(function (currentApp) {
                     var quitAppDialog = document.querySelector('#quitAppDialog');
-                    document.getElementById('quitAppDialogText').innerHTML = 
+                    document.getElementById('quitAppDialogText').innerHTML =
                         currentApp.title + ' is already running. Would you like to quit ' +
                         currentApp.title + '?';
                     quitAppDialog.showModal();
@@ -663,7 +684,7 @@ function stopGame(host, callbackFunction) {
             }
             var appName = runningApp.title;
             snackbarLog('Stopping ' + appName);
-            host.quitApp().then(function (ret2) { 
+            host.quitApp().then(function (ret2) {
                 host.refreshServerInfo().then(function (ret3) { // refresh to show no app is currently running.
                     showAppsMode();
                     stylizeBoxArt(host, runningApp.id);

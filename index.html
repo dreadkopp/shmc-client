@@ -17,13 +17,18 @@
       padding:0px 0px 0px 0px!important;
     }
     </style>
-      <main id="main-content" class="mdl-layout__content">
-        <webview id="main-content-desktop" style="width:100vw; height:100vh" autosize="on" src="http://shmc-server:8000"></webview>
+      <main id="main-content-whole" class="mdl-layout__content">
+        <span id='toStreams'><i class="material-icons">keyboard_arrow_down</i></span>
+        <span id='toDesktop'><i class="material-icons">keyboard_arrow_up</i></span>
+        <div id="main-content-desktop" style="display: block">
+          <webview style="width:100vw; height:100vh" autosize="on" src="http://shmc-server:8000"></webview>
+        </div>
+        <div id="main-content">
         <header id="main-navigation" class="mdl-layout__header mdl-layout__header--transparent">
             <div class="mdl-layout__header-row">
                 <span id='backIcon'><i class="material-icons">keyboard_arrow_left</i></span>
                 <!-- Title -->
-                <span class="mdl-layout-title">SHMC<span>CLIENT</span></span>
+                <span class="mdl-layout-title">APP<span>STREAM</span></span>
                 <!-- Add spacer, to align navigation to the right -->
                 <div class="mdl-layout-spacer"></div>
                 <!-- Navigation -->
@@ -114,6 +119,7 @@
             <div id="naclSpinner" class="mdl-progress mdl-js-progress mdl-progress__indeterminate">
                 <h5 id="naclSpinnerMessage"></h5>
             </div>
+          </div>
     </main>
 </div>
 <script defer src="static/js/jquery-2.2.0.min.js"></script>
