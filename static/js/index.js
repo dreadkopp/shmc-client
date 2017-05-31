@@ -5,14 +5,12 @@ var myUniqueid;
 var api;  // `api` should only be set if we're in a host-specific screen. on the initial screen it should always be null.
 var isInGame = false; // flag indicating whether the game stream started
 var windowState = 'normal'; // chrome's windowState, possible values: 'normal' or 'fullscreen'
-var initialLoadDone = false
 
 
 // Called by the common.js module.
 function attachListeners() {
     changeUiModeForNaClLoad();
-    $('#toStreams').on('click', showMoonlight);
-    $('#toDesktop').on('click', showDesktop);
+
     $('.resolutionMenu li').on('click', saveResolution);
     $('.framerateMenu li').on('click', saveFramerate);
     $('#bitrateSlider').on('input', updateBitrateField); // input occurs every notch you slide
@@ -21,22 +19,11 @@ function attachListeners() {
     $('#addHostCell').on('click', addHost);
     $('#backIcon').on('click', showHostsAndSettingsMode);
     $('#quitCurrentApp').on('click', stopGameWithConfirmation);
+    $('#toStreams').on('click', showStream);
+    $('#toDesktop').on('click', showDesktop);
     $(window).resize(fullscreenNaclModule);
     chrome.app.window.current().onMaximized.addListener(fullscreenChromeWindow);
 }
-
-function showMoonlight() {
-  $("#main-content").show();
-  $("#main-content-desktop").hide();
-}
-
-
-function showDesktop() {
-  $("#main-content").hide();
-  $("#main-content-desktop").show();
-
-}
-
 
 function fullscreenChromeWindow() {
     // when the user clicks the maximize button on the window,
@@ -64,6 +51,28 @@ function loadWindowState() {
     });
 }
 
+function showDesktop() {
+  $('#main-navigation').hide();
+  $('#host-grid').hide();
+  $('#game-grid').hide();
+  $('#desktop').show();
+  $('.mdl-layout__content').css('overflow-y', 'hidden');
+  var webview = document.getElementById("desktopview");
+  webview.addEventListener('permissionrequest', function(e) {
+    if (e.permission === 'fullscreen') {
+      e.request.allow();
+    }
+  });
+}
+
+function showStream() {
+  $('#main-navigation').show();
+  $('#host-grid').show();
+  $('#game-grid').show();
+  $('#desktop').hide();
+  $('.mdl-layout__content').css('overflow-y', 'auto');
+}
+
 function onFullscreened() {
     if (!isInGame && windowState == 'normal') {
         storeData('windowState', 'fullscreen', null);
@@ -80,9 +89,8 @@ function onBoundsChanged() {
 
 function changeUiModeForNaClLoad() {
     $('#main-navigation').children().hide();
-    $("#main-content-stream").hide();
     $("#main-content").children().not("#listener, #naclSpinner").hide();
-    $('#naclSpinnerMessage').text('Loading SHMC Client plugin...');
+    $('#naclSpinnerMessage').text('Loading SHMC...');
     $('#naclSpinner').css('display', 'inline-block');
 }
 
@@ -91,7 +99,7 @@ function restoreUiAfterNaClLoad() {
     $("#main-content").children().not("#listener, #naclSpinner, #game-grid").show();
     $('#naclSpinner').hide();
     $('#loadingSpinner').css('display', 'none');
-    showHostsAndSettingsMode();
+    //showHostsAndSettingsMode();
     for(var hostUID in hosts) {
         beginBackgroundPollingOfHost(hosts[hostUID]);
     }
@@ -121,11 +129,6 @@ function restoreUiAfterNaClLoad() {
             }
         }
     });
-    if (!initialLoadDone){
-      $("#main-content").hide();
-      $("#main-content-desktop").show();
-      initialLoadDone = true;
-    }
 }
 
 function beginBackgroundPollingOfHost(host) {
@@ -861,6 +864,11 @@ function onWindowLoad(){
             console.log('Loaded previously connected hosts.');
         });
     }
+
+    showDesktop();
+    $('#backIcon').hide();
+    $('#quitCurrentApp').hide();
+
 }
 
 

@@ -23,9 +23,13 @@ span.mdl-layout-title > span {
     padding: 0 80px 0 80px;
 }
 
-main {
-    padding: 0 80px 0 80px;
+#switch {
+  display: block;
+  margin: auto;
+  left: 50%;
+  position: absolute;
 }
+
 
 @media screen and (max-width: 600px) {
     #host-grid .mdl-card {
@@ -48,9 +52,6 @@ main {
 }
 
 @media screen and (min-width: 800px) and (max-width: 1024px) {
-    main {
-        padding: 0 72px 0 72px !important;
-    }
     .mdl-layout__header-row {
         padding: 0 72px 0 72px !important;
     }
@@ -122,7 +123,7 @@ main {
 .mdl-dialog__title {
     padding: 24px 24px 0;
     margin: 0;
-    font-size: 2.5rem; 
+    font-size: 2.5rem;
 }
 .mdl-dialog__content {
     padding: 20px 24px 24px 24px;

@@ -4,7 +4,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="-1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moonlight</title>
+    <title>SHMC</title>
     <link rel="stylesheet" href="static/css/roboto.css">
     <link rel="stylesheet" href="static/css/material.min.css">
     <link rel="stylesheet" href="static/css/style.css">
@@ -12,94 +12,90 @@
 </head>
 <body data-name="moonlight-chrome" data-tools="pnacl" data-configs="Debug Release" data-path="{tc}/{config}">
 <div class="mdl-layout mdl-js-layout">
-    <style>
-    main {
-      padding:0px 0px 0px 0px!important;
-    }
-    </style>
-      <main id="main-content-whole" class="mdl-layout__content">
-        <span id='toStreams'><i class="material-icons">keyboard_arrow_down</i></span>
-        <span id='toDesktop'><i class="material-icons">keyboard_arrow_up</i></span>
-        <div id="main-content-desktop" style="display: block">
-          <webview style="width:100vw; height:100vh" autosize="on" src="http://shmc-server:8000"></webview>
+    <header id="main-navigation" class="mdl-layout__header mdl-layout__header--transparent">
+        <div class="mdl-layout__header-row">
+            <span id='backIcon'><i class="material-icons">keyboard_arrow_left</i></span>
+            <!-- Title -->
+            <span class="mdl-layout-title">APP<span>STREAM</span></span>
+            <!-- Add spacer, to align navigation to the right -->
+            <div class="mdl-layout-spacer"></div>
+            <!-- Navigation -->
+            <nav class="mdl-navigation">
+
+                    <div class="nav-menu-parent">
+                        <div id="resolutionMenu">
+                            <button id="selectResolution" data-value="1920:1080" class="mdl-button mdl-js-button">
+                                1080p
+                            </button>
+                        </div>
+
+                        <ul class="resolutionMenu mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+                            for="selectResolution">
+                            <li class="mdl-menu__item" data-value="1280:720">720p</li>
+                            <li class="mdl-menu__item" data-value="1920:1080">1080p</li>
+                            <li class="mdl-menu__item" data-value="3840:2160">4K</li>
+                        </ul>
+
+                        <div id="resolutionTooltip" class="mdl-tooltip" for="resolutionMenu">
+                            Resolution
+                        </div>
+                    </div>
+
+                    <div class="nav-menu-parent">
+                        <div id="framerateMenu">
+                            <button id="selectFramerate" data-value="60" class="mdl-button mdl-js-button">
+                                60 FPS
+                            </button>
+                        </div>
+
+                        <ul class="framerateMenu mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+                            for="selectFramerate">
+                            <li class="mdl-menu__item" data-value="30">30 FPS</li>
+                            <li class="mdl-menu__item" data-value="60">60 FPS</li>
+                        </ul>
+
+                        <div id="framerateTooltip" class="mdl-tooltip" for="framerateMenu">
+                            Framerate
+                        </div>
+                    </div>
+
+                    <div class="nav-menu-parent">
+                        <div id="bandwidthMenu">
+                            <button id='bitrateField' class="mdl-button">10 Mbps</button>
+                        </div>
+
+                        <div class="bitrateMenu mdl-menu mdl-js-menu mdl-js-ripple-effect" for="bandwidthMenu">
+                            <input id="bitrateSlider" class="mdl-slider mdl-js-slider" type="range" min="0" max="100" step="0.5" value="10">
+                        </div>
+
+                        <div id="bandwidthTooltip" class="mdl-tooltip" for="bandwidthMenu">
+                            Bandwidth
+                        </div>
+                    </div>
+
+                    <label id="externalAudioBtn" class="mdl-icon-toggle mdl-js-icon-toggle mdl-js-ripple-effect" for="remoteAudioEnabledSwitch">
+                        <input type="checkbox" id="remoteAudioEnabledSwitch" class="mdl-icon-toggle__input" checked>
+                        <i class="mdl-icon-toggle__label material-icons">volume_up</i>
+                    </label>
+                    <div id="externalAudioTooltip" class="mdl-tooltip" for="externalAudioBtn">
+                        Remote audio is ON
+                    </div>
+
+                    <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" id="quitCurrentApp">
+                        <i class="material-icons">remove_circle_outline</i>
+                        Quit Current App
+                    </button>
+            </nav>
         </div>
-        <div id="main-content">
-        <header id="main-navigation" class="mdl-layout__header mdl-layout__header--transparent">
-            <div class="mdl-layout__header-row">
-                <span id='backIcon'><i class="material-icons">keyboard_arrow_left</i></span>
-                <!-- Title -->
-                <span class="mdl-layout-title">APP<span>STREAM</span></span>
-                <!-- Add spacer, to align navigation to the right -->
-                <div class="mdl-layout-spacer"></div>
-                <!-- Navigation -->
-                <nav class="mdl-navigation">
-
-                        <div class="nav-menu-parent">
-                            <div id="resolutionMenu">
-                                <button id="selectResolution" data-value="1920:1080" class="mdl-button mdl-js-button">
-                                    1080p
-                                </button>
-                            </div>
-
-                            <ul class="resolutionMenu mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
-                                for="selectResolution">
-                                <li class="mdl-menu__item" data-value="1280:720">720p</li>
-                                <li class="mdl-menu__item" data-value="1920:1080">1080p</li>
-                                <li class="mdl-menu__item" data-value="3840:2160">4K</li>
-                            </ul>
-
-                            <div id="resolutionTooltip" class="mdl-tooltip" for="resolutionMenu">
-                                Resolution
-                            </div>
-                        </div>
-
-                        <div class="nav-menu-parent">
-                            <div id="framerateMenu">
-                                <button id="selectFramerate" data-value="60" class="mdl-button mdl-js-button">
-                                    60 FPS
-                                </button>
-                            </div>
-
-                            <ul class="framerateMenu mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
-                                for="selectFramerate">
-                                <li class="mdl-menu__item" data-value="30">30 FPS</li>
-                                <li class="mdl-menu__item" data-value="60">60 FPS</li>
-                            </ul>
-
-                            <div id="framerateTooltip" class="mdl-tooltip" for="framerateMenu">
-                                Framerate
-                            </div>
-                        </div>
-
-                        <div class="nav-menu-parent">
-                            <div id="bandwidthMenu">
-                                <button id='bitrateField' class="mdl-button">10 Mbps</button>
-                            </div>
-
-                            <div class="bitrateMenu mdl-menu mdl-js-menu mdl-js-ripple-effect" for="bandwidthMenu">
-                                <input id="bitrateSlider" class="mdl-slider mdl-js-slider" type="range" min="0" max="100" step="0.5" value="10">
-                            </div>
-
-                            <div id="bandwidthTooltip" class="mdl-tooltip" for="bandwidthMenu">
-                                Bandwidth
-                            </div>
-                        </div>
-
-                        <label id="externalAudioBtn" class="mdl-icon-toggle mdl-js-icon-toggle mdl-js-ripple-effect" for="remoteAudioEnabledSwitch">
-                            <input type="checkbox" id="remoteAudioEnabledSwitch" class="mdl-icon-toggle__input" checked>
-                            <i class="mdl-icon-toggle__label material-icons">volume_up</i>
-                        </label>
-                        <div id="externalAudioTooltip" class="mdl-tooltip" for="externalAudioBtn">
-                            Remote audio is ON
-                        </div>
-
-                        <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" id="quitCurrentApp">
-                            <i class="material-icons">remove_circle_outline</i>
-                            Quit Current App
-                        </button>
-                </nav>
+    </header>
+    <main id="main-content" class="mdl-layout__content">
+            <div id="switch">
+              <span id='toStreams'><i class="material-icons">keyboard_arrow_down</i></span>
+              <span id='toDesktop'><i class="material-icons">keyboard_arrow_up</i></span>
             </div>
-        </header>
+            <div id="desktop">
+                <webview  id="desktopview" autosize="on" style="width:100vw; height:100vh" src="http://shmc-server:8000"></webview>
+            </div>
             <div id="host-grid">
                 <div class="page-title">Your PCs</div>
                 <div class="add-host-card mdl-card mdl-shadow--4dp" id='addHostCell'>
@@ -119,7 +115,6 @@
             <div id="naclSpinner" class="mdl-progress mdl-js-progress mdl-progress__indeterminate">
                 <h5 id="naclSpinnerMessage"></h5>
             </div>
-          </div>
     </main>
 </div>
 <script defer src="static/js/jquery-2.2.0.min.js"></script>
